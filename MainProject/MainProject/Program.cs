@@ -1,10 +1,20 @@
 using MainProject.Components;
+using MainProject.DAL;
+using MainProject.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var conexion = builder.Configuration.GetConnectionString("conexion");
+builder.Services.AddDbContext<Context>(options =>
+    options.UseSqlite(conexion));
+
+builder.Services.AddScoped<PrioridadesService>();
+
 
 var app = builder.Build();
 
