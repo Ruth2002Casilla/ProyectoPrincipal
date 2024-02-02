@@ -1,0 +1,65 @@
+﻿@page "/DetailsPrioridades/{PrioridadId:int}";
+
+@inject PrioridadesService prioridadesService;
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+    <div class="card-header bg-primary text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0 font-weight-bold">Detalles de Prioridades</h3>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-md-5 mb-3">
+                <label style="font-weight: bold; display: inline-block; margin-left: 150px;">Descripción:</label>
+                <span>@Prioridades.Descripcion</span>
+            </div>
+
+            <div class="col-md-7 mb-3">
+                <label style="font-weight: bold; display: inline-block; margin-left: 170px;">Días Compromiso:</label>
+                <span>@Prioridades.DiasCompromiso</span>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <div class="card-footer bg-light d-flex justify-content-end">
+        <div class="btn-group">
+            <a type="button" href="/PrioridadesIndex/" class="btn btn-outline-danger"><span class="fas fa-arrow-left"></span> Retroceder </a>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    public Prioridades Prioridades = new Prioridades();
+
+    [Parameter]
+    public int PrioridadId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PrioridadId > 0)
+        {
+            Prioridades.PrioridadId = PrioridadId;
+            await Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var existe = await prioridadesService.Buscar(Prioridades.PrioridadId);
+        if (existe != null)
+        {
+            Prioridades = existe;
+        }
+    }
+}
+

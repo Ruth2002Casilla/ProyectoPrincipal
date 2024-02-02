@@ -1,0 +1,116 @@
+﻿@page "/CreatePrioridades"
+
+@inject PrioridadesService prioridadesService;
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+
+
+<EditForm Model="Prioridades" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+        <div class="card-header bg-primary text-white" style="text-align: center;">
+            <h3> <i class="fas fa-clipboard-list"></i> Registro de Prioridades</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label for="PrioridadId" class="form-label">ID Prioridad:</label>
+                    <div class="input-group">
+                        <div style="width: 40%; height: 1em;">
+                            <InputNumber @bind-Value="Prioridades.PrioridadId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="Descripcion" class="form-label">Descripci&oacuten:</label>
+                <InputText @bind-Value="Prioridades.Descripcion" class="form-control" />
+                <ValidationMessage For="@(() => Prioridades.Descripcion)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="DiasCompromiso" class="form-label">D&iacuteas Compromiso:</label>
+                <InputNumber @bind-Value="Prioridades.DiasCompromiso" class="form-control" />
+                <ValidationMessage For="@(() => Prioridades.DiasCompromiso)" />
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
+                <a type="button" href="/PrioridadesIndex/" class="btn btn-outline-danger"><span class="fas fa-arrow-left"></span> Retroceder </a>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+
+    public Prioridades Prioridades = new Prioridades();
+    private bool descripcionExistente = false;
+
+    public async Task Nuevo()
+    {
+        Prioridades = new Prioridades();
+        descripcionExistente = false;
+    }
+
+    public async Task Buscar()
+    {
+        descripcionExistente = false;
+        var prioridadEncontrada = await prioridadesService.Buscar(Prioridades.PrioridadId);
+
+        if (prioridadEncontrada != null)
+        {
+            Prioridades = prioridadEncontrada;
+        }
+        else
+        {
+            await Nuevo();
+        }
+    }
+
+    public async Task<bool> Verificar()
+    {
+        var _Prioridades = await prioridadesService.Listar(p => p.Descripcion!.ToLower() == Prioridades.Descripcion!.ToLower()
+            && p.PrioridadId != Prioridades.PrioridadId);
+
+        descripcionExistente = _Prioridades.Any();
+
+        return descripcionExistente;
+    }
+
+    public async Task Guardar()
+    {
+        if (await Verificar())
+        {
+            return;
+        }
+        var guardo = await prioridadesService.Guardar(Prioridades);
+        if (guardo)
+        {
+            await this.Nuevo();
+            Console.WriteLine(Prioridades);
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (await prioridadesService.Verificar(Prioridades.PrioridadId) && await prioridadesService.Eliminar(Prioridades))
+        {
+            await this.Nuevo();
+        }
+        else
+        {
+            return;
+        }
+    }
+
+}
