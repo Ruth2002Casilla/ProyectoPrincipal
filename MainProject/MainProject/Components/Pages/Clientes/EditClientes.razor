@@ -1,0 +1,109 @@
+﻿@page "/EditClientes/{ClienteID:int}";
+
+@inject ClientesService clienteService;
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<EditForm Model="Clientes" OnValidSubmit="Guardar" FormName="@FormName">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+
+        <div class="card-header bg-primary text-white text-center py-2 rounded">
+            <h3 style="font-weight: bold;" class="mb-0 font-weight-bold">Editar Cliente</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Nombres" class="form-label">Nombres:</label>
+                    <InputText @bind-Value="Clientes.NombreCliente" class="form-control" placeholder="Ingrese sus nombres" />
+                    <ValidationMessage For="@(() => Clientes.NombreCliente)" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="RNC" class="form-label">RNC:</label>
+                    <InputText @bind-Value="Clientes.RNCCliente" class="form-control" placeholder="Ingrese el RNC" />
+                    <ValidationMessage For="@(() => Clientes.RNCCliente)" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Telefono" class="form-label">Teléfono:</label>
+                    <InputText @bind-Value="Clientes.TelefonoCliente" class="form-control" placeholder="Ingrese el Teléfono" />
+                    <ValidationMessage For="@(() => Clientes.TelefonoCliente)" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="Celular" class="form-label">Celular:</label>
+                    <InputText @bind-Value="Clientes.CelularCliente" class="form-control" placeholder="Ingrese el Celular" />
+                    <ValidationMessage For="@(() => Clientes.CelularCliente)" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Email" class="form-label">Email:</label>
+                    <InputText @bind-Value="Clientes.EmailCliente" class="form-control" placeholder="Ingrese el Email" />
+                    <ValidationMessage For="@(() => Clientes.EmailCliente)" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="Direccion" class="form-label">Dirección:</label>
+                    <InputText @bind-Value="Clientes.DireccionCliente" class="form-control" placeholder="Ingrese la Dirección" />
+                    <ValidationMessage For="@(() => Clientes.DireccionCliente)" />
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-end">
+            <div class="btn-group">
+                <a type="button" href="/ClientesIndex/" class="btn btn-outline-danger"><span class="fas fa-arrow-left"></span> Retroceder </a>
+                <button type="submit" class="btn btn-outline-success"><span class="fas fa-save"></span> Guardar </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+
+    public Clientes Clientes = new Clientes();
+
+    [Parameter]
+    public int ClienteID { get; set; }
+   
+    public string FormName { get; set; } = "EditClientes";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ClienteID > 0)
+        {
+            Clientes.ClienteId = ClienteID;
+            await Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var existe = await clienteService.Buscar(Clientes.ClienteId);
+        if (existe != null)
+        {
+            Clientes = existe;
+        }
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await clienteService.Guardar(Clientes);
+        if (guardo)
+        {
+            NavigationManager.NavigateTo("/ClientesIndex");
+        }
+    }
+
+}
