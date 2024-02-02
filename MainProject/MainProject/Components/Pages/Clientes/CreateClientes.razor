@@ -1,0 +1,150 @@
+﻿@page "/CrearCliente"
+
+@inject ClientesService clienteService;
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+
+<EditForm Model="Clientes" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+        <div class="card-header bg-primary text-white d-flex justify-content-center align-items-center">
+            <h3 class="mb-0"> <i class="fas fa-clipboard-list"></i> Registro de Clientes</h3>
+        </div>
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label for="ClienteId" class="form-label">ID del Cliente:</label>
+                    <div class="input-group">
+                        <div style="width: 90%; height: 2em;">
+                            <InputNumber @bind-Value="Clientes.ClienteId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="RNCCliente" class="form-label">RNC:</label>
+                    <div class="input-group">
+                        <div style="width: 46em; height: 2.5em;">
+                            <InputText @bind-Value="Clientes.RNCCliente" class="form-control" style="font-size: 0.8em;" />
+                            <ValidationMessage For="@(() => Clientes.RNCCliente)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="NombreCliente" class="form-label">Nombre:</label>
+                <InputText @bind-Value="Clientes.NombreCliente" class="form-control" style="width: 60em; height: 2.5em" />
+                <ValidationMessage For="@(() => Clientes.NombreCliente)" />
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="TelefonoCliente" class="form-label">Teléfono:</label>
+                    <div class="input-group">
+                        <div style="width: 100%; height: 2em;">
+                            <InputText @bind-Value="Clientes.TelefonoCliente" class="form-control" style="font-size: 0.8em;" />
+                            <ValidationMessage For="@(() => Clientes.TelefonoCliente)" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 ">
+                    <label for="CelularCliente" class="form-label">Celular:</label>
+                    <div class="input-group">
+                        <div style="width: 100%; height: 2em;">
+                            <InputText @bind-Value="Clientes.CelularCliente" class="form-control" style="font-size: 0.8em;" />
+                            <ValidationMessage For="@(() => Clientes.CelularCliente)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mb-3">
+                <label for="EmailCliente" class="form-label">Email:</label>
+                <InputText @bind-Value="Clientes.EmailCliente" class="form-control" style="width: 60em; height: 2.5em" />
+                <ValidationMessage For="@(() => Clientes.EmailCliente)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="DireccionCliente" class="form-label">Dirección:</label>
+                <InputText @bind-Value="Clientes.DireccionCliente" class="form-control" style="width: 60em; height: 5em" />
+                <ValidationMessage For="@(() => Clientes.DireccionCliente)" />
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
+                <a type="button" href="/ClientesIndex/" class="btn btn-outline-danger"><span class="fas fa-arrow-left"></span> Retroceder </a>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    public Clientes Clientes = new Clientes();
+    private bool nombreExistente = false;
+
+    public void Nuevo()
+    {
+        Clientes = new Clientes();
+        nombreExistente = false;
+    }
+
+    public async Task Buscar()
+    {
+        nombreExistente = false;
+        var clienteEncontrado = await clienteService.Buscar(Clientes.ClienteId);
+
+        if (clienteEncontrado != null)
+        {
+            Clientes = clienteEncontrado;
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+
+    public bool Verificar()
+    {
+
+        nombreExistente = clienteService.Listar(c => c.NombreCliente.ToLower() == Clientes.NombreCliente.ToLower()
+        && c.ClienteId != Clientes.ClienteId).Result.Any();
+
+        return nombreExistente;
+    }
+
+    public async Task Guardar()
+    {
+
+        if (Verificar())
+        {
+            return;
+        }
+        var guardo = await clienteService.Guardar(Clientes);
+        if (guardo)
+        {
+            Nuevo();
+            Console.WriteLine(Clientes);
+        }
+    }
+
+    public async Task Eliminar()
+    {
+
+        if (await clienteService.Verificar(Clientes.ClienteId) && await clienteService.Eliminar(Clientes))
+        {
+            Nuevo();
+        }
+        else { return; }
+    }
+
+}
+
