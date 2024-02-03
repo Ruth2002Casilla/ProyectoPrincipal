@@ -1,0 +1,82 @@
+﻿@page "/DeleteClientes/{ClienteID:int}";
+
+@inject ClientesService clienteService;
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+    <div class="card-header bg-primary text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0 font-weight-bold">Eliminar Cliente</h3>
+    </div>
+
+    <div class="card-body text-center">
+        <div class="col-md-6 mb-3 mx-auto">
+            <label style="font-weight: bold;" class="form-label font-weight-bold">Nombres:</label>
+            <span>@Clientes.NombreCliente</span>
+        </div>
+
+        <div class="col-md-6 mb-3 mx-auto">
+            <label style="font-weight: bold;" class="form-label font-weight-bold">RNC:</label>
+            <span>@Clientes.DireccionCliente</span>
+        </div>
+
+        <div class="col-md-6 mb-3 mx-auto">
+            <label style="font-weight: bold;" class="form-label font-weight-bold">Teléfono:</label>
+            <span>@Clientes.TelefonoCliente</span>
+        </div>
+
+        <div class="col-md-12 mb-3 mx-auto">
+            <p style="font-weight: bold;">¿Seguro que deseas eliminar este cliente?</p>
+        </div>
+
+    </div>
+
+    <div class="card-footer bg-light d-flex justify-content-center">
+        <div class="btn-group">
+            <button @onclick="Eliminar" type="button" class="btn btn-success btn-block"><span class="fas fa-check"></span> Sí</button>
+            <a href="/ClientesIndex/" class="btn btn-danger btn-block"><span class="fas fa-times"></span> No</a>
+        </div>
+    </div>
+
+</div>
+
+
+
+@code {
+
+    public Clientes Clientes = new Clientes();
+
+    [Parameter]
+    public int ClienteID { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ClienteID > 0)
+        {
+            Clientes.ClienteId = ClienteID;
+            await Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var existe = await clienteService.Buscar(Clientes.ClienteId);
+        if (existe != null)
+        {
+            Clientes = existe;
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        var elimino = await clienteService.Eliminar(Clientes);
+        if (elimino)
+        {
+            NavigationManager.NavigateTo("/ClientesIndex");
+        }
+    }
+
+}
+
+
