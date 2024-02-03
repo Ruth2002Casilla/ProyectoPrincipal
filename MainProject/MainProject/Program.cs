@@ -15,6 +15,7 @@ builder.Services.AddDbContext<Context>(options =>
 
 builder.Services.AddScoped<PrioridadesService>();
 builder.Services.AddScoped<ClientesService>();
+builder.Services.AddScoped<TicketsService>();
 
 var app = builder.Build();
 
