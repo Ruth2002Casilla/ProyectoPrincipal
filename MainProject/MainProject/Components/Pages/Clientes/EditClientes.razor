@@ -5,7 +5,7 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 
-<EditForm Model="Clientes" OnValidSubmit="Guardar">
+<EditForm Model="Clientes" OnValidSubmit="Guardar" FormName="@FormName">
     <DataAnnotationsValidator />
     <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
 
@@ -32,7 +32,7 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="Telefono" class="form-label">Teléfono:</label>
-                    <InputText @bind-Value="Clientes.TelefonoCliente" class="form-control" placeholder="Ingrese el Tel&eacutefono" />
+                    <InputText @bind-Value="Clientes.TelefonoCliente" class="form-control" placeholder="Ingrese el Teléfono" />
                     <ValidationMessage For="@(() => Clientes.TelefonoCliente)" />
                 </div>
 
@@ -52,7 +52,7 @@
 
                 <div class="col-md-6 mb-3">
                     <label for="Direccion" class="form-label">Dirección:</label>
-                    <InputText @bind-Value="Clientes.DireccionCliente" class="form-control" placeholder="Ingrese la Direcci&oacuten" />
+                    <InputText @bind-Value="Clientes.DireccionCliente" class="form-control" placeholder="Ingrese la Dirección" />
                     <ValidationMessage For="@(() => Clientes.DireccionCliente)" />
                 </div>
             </div>
@@ -75,6 +75,9 @@
 
     [Parameter]
     public int ClienteID { get; set; }
+
+    public string FormName { get; set; } = "EditClientes";
+
 
     protected override async Task OnInitializedAsync()
     {
