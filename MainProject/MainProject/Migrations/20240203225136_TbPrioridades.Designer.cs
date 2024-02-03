@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainProject.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240202153113_TbClientes")]
-    partial class TbClientes
+    [Migration("20240203225136_TbPrioridades")]
+    partial class TbPrioridades
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,42 @@ namespace MainProject.Migrations
                     b.HasKey("PrioridadId");
 
                     b.ToTable("Prioridades");
+                });
+
+            modelBuilder.Entity("MainProject.Models.Tickets", b =>
+                {
+                    b.Property<int>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Asunto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Fecha")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PrioridadId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SistemaId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SolicitadoPor")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TicketId");
+
+                    b.ToTable("Tickets");
                 });
 #pragma warning restore 612, 618
         }

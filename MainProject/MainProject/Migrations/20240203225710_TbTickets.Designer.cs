@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MainProject.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20240203220320_TbTickets")]
+    [Migration("20240203225710_TbTickets")]
     partial class TbTickets
     {
         /// <inheritdoc />
