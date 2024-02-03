@@ -1,0 +1,115 @@
+﻿@page "/EditarTickets/{TicketId:int}";
+
+@inject TicketsService ticketService;
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<EditForm Model="Tickets" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
+
+        <div class="card-header bg-primary text-white text-center py-2 rounded">
+            <h3 style="font-weight: bold;" class="mb-0 font-weight-bold">Editar Ticket</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="Fecha" class="form-label">Fecha:</label>
+                    <InputText @bind-Value="Tickets.Fecha" class="form-control" placeholder="Ingrese la Fecha" />
+                    <ValidationMessage For="@(() => Tickets.Fecha)" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="ClienteId" class="form-label">Cliente Id:</label>
+                    <InputNumber @bind-Value="Tickets.ClienteId" class="form-control" placeholder="Ingrese el Cliente Id" />
+                    <ValidationMessage For="@(() => Tickets.ClienteId)" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="SistemaId" class="form-label">Sistema Id:</label>
+                    <InputNumber @bind-Value="Tickets.SistemaId" class="form-control" placeholder="Ingrese el Sistema Id" />
+                    <ValidationMessage For="@(() => Tickets.SistemaId)" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="PrioridadId" class="form-label">Prioridad Id:</label>
+                    <InputNumber @bind-Value="Tickets.PrioridadId" class="form-control" placeholder="Ingrese el Prioridad Id" />
+                    <ValidationMessage For="@(() => Tickets.PrioridadId)" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="SolicitadoPor" class="form-label">Solicitado Por:</label>
+                    <InputText @bind-Value="Tickets.SolicitadoPor" class="form-control" placeholder="Ingrese el Solicitante" />
+                    <ValidationMessage For="@(() => Tickets.SolicitadoPor)" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="Asunto" class="form-label">Asunto:</label>
+                    <InputText @bind-Value="Tickets.Asunto" class="form-control" placeholder="Ingrese el Asunto" />
+                    <ValidationMessage For="@(() => Tickets.Asunto)" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="Descripcion" class="form-label">Descripci&oacuten:</label>
+                    <InputText @bind-Value="Tickets.Descripcion" class="form-control" placeholder="Ingrese la Descripci&oacuten" />
+                    <ValidationMessage For="@(() => Tickets.Descripcion)" />
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-end">
+            <div class="btn-group">
+                <a type="button" href="/TicketsIndex/" class="btn btn-outline-danger"><span class="fas fa-arrow-left"></span> Retroceder </a>
+                <button type="submit" class="btn btn-outline-success"><span class="fas fa-save"></span> Guardar </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+
+    public Tickets Tickets = new Tickets();
+
+    [Parameter]
+    public int TicketId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TicketId > 0)
+        {
+            Tickets.TicketId = TicketId;
+            await Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var existe = await ticketService.Buscar(Tickets.TicketId);
+        if (existe != null)
+        {
+            Tickets = existe;
+        }
+    }
+
+    public async Task Guardar()
+    {
+        var guardo = await ticketService.Guardar(Tickets);
+        if (guardo)
+        {
+            NavigationManager.NavigateTo("/TicketsIndex");
+        }
+
+    }
+
+}
+
+
