@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MainProject.DAL;
 
-namespace MainProject.DAL
+namespace MainProject.Services
 {
-    public class ContextFactory
+    public class ContextFactory : IDbContextFactory<Context>
     {
         private readonly DbContextOptions<Context> _options;
 
@@ -11,11 +12,9 @@ namespace MainProject.DAL
             _options = options;
         }
 
-        public Context CreateContext()
+        public Context CreateDbContext()
         {
             return new Context(_options);
         }
     }
 }
-
-

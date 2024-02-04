@@ -10,12 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Configura las opciones del contexto de la base de datos
-builder.Services.AddDbContext<Context>(options =>{
-    // Obtén la cadena de conexión desde appsettings.json
-    var connectionString = builder.Configuration.GetConnectionString("conexion");
-    options.UseSqlServer(connectionString);
-});
+builder.Services.AddDbContextFactory<Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<TicketsService>();
 
