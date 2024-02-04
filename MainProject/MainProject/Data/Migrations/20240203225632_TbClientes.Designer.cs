@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MainProject.Migrations
 {
-    [DbContext(typeof(Context))]
+    [DbContext(typeof(ContextFactory))]
     [Migration("20240203225632_TbClientes")]
     partial class TbClientes
     {
