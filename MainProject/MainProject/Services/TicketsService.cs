@@ -1,34 +1,46 @@
 ﻿using MainProject.DAL;
-using System.Linq.Expressions;
 using MainProject.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace MainProject.Services
 {
     public class TicketsService
     {
-        private readonly Context _context;
+        private readonly IDbContextFactory<Context> _contextFactory;
 
-        public TicketsService(Context context)
+        public TicketsService(IDbContextFactory<Context> contextFactory)
         {
-            _context = context;
+            _contextFactory = contextFactory;
         }
 
         public async Task<bool> Verificar(int TicketId)
         {
-            return await _context.Tickets.AnyAsync(t => t.TicketId == TicketId);
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                return await context.Tickets.AnyAsync(t => t.TicketId == TicketId);
+            }
         }
 
         public async Task<bool> Agregar(Tickets Ticket)
         {
-            _context.Tickets.Add(Ticket);
-            return await _context.SaveChangesAsync() > 0;
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                context.Tickets.Add(Ticket);
+                return await context.SaveChangesAsync() > 0;
+            }
         }
 
         public async Task<bool> Modificar(Tickets Ticket)
         {
-            _context.Update(Ticket);
-            return await _context.SaveChangesAsync() > 0;
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                context.Update(Ticket);
+                return await context.SaveChangesAsync() > 0;
+            }
         }
 
         public async Task<bool> Guardar(Tickets Ticket)
@@ -41,26 +53,32 @@ namespace MainProject.Services
 
         public async Task<bool> Eliminar(Tickets Ticket)
         {
-            var cantidad = await _context.Tickets
-                .Where(t => t.TicketId == Ticket.TicketId)
-                .ExecuteDeleteAsync();
-
-            return cantidad > 0;
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                context.Remove(Ticket);
+                return await context.SaveChangesAsync() > 0;
+            }
         }
 
         public async Task<Tickets?> Buscar(int TicketId)
         {
-            return await _context.Tickets
-                .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.TicketId == TicketId);
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                return await context.Tickets
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(t => t.TicketId == TicketId);
+            }
         }
 
         public async Task<List<Tickets>> Listar(Expression<Func<Tickets, bool>> criterio)
         {
-            return await _context.Tickets
-                .AsNoTracking()
-                .Where(criterio)
-                .ToListAsync();
+            using (var context = _contextFactory.CreateDbContext())
+            {
+                return await context.Tickets
+                    .AsNoTracking()
+                    .Where(criterio)
+                    .ToListAsync();
+            }
         }
     }
 }

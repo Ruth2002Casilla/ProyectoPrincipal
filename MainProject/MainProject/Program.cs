@@ -2,6 +2,7 @@ using MainProject.Components;
 using MainProject.DAL;
 using MainProject.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,12 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-var conexion = builder.Configuration.GetConnectionString("conexion");
-builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlite(conexion));
+builder.Services.AddDbContextFactory<Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<PrioridadesService>();
-builder.Services.AddScoped<ClientesService>();
 builder.Services.AddScoped<TicketsService>();
 
 var app = builder.Build();

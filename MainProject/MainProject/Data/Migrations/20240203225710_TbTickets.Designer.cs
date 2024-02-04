@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MainProject.DAL;
+using MainProject.Services;
 
 #nullable disable
 
 namespace MainProject.Migrations
 {
-    [DbContext(typeof(Context))]
+    [DbContext(typeof(ContextFactory))]
     [Migration("20240203225710_TbTickets")]
     partial class TbTickets
     {
